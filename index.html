@@ -1,30 +1,133 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="style.css">
-	<script src="js/index.js" defer></script>
-	<title>Document</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <script src="js/index.js" defer></script>
+  <title>Turnos Estética Pro - Prototipo</title>
 </head>
 <body>
-	<header>
-		<h1>Turnos siguientes</h1>
-	</header>
-	<main>
-		<div id="turnosContainer"></div>
-		<div id="detalleContainer" class="escondido">
-			<h2 id="cliente">Nombre</h2>
-			<p>Modelo: <span id="modelo"></span></p>
-			<p>Problema: <span id="problema"></span></p>
-			<div>
-				<label for="comentario">Comentario del técnico: </label>
-				<input name="comentario" id="comentario"></input>
-			</div>
-			<button id="finalizar">Marcar finalizado</button>
-		</div>
-	</main>
+  <header class="hero">
+    <div class="hero__content">
+      <p class="badge">Reserva inteligente</p>
+      <h1>Turnos paso a paso con disponibilidad real</h1>
+      <p class="hero__subtitle">
+        Elegí tu servicio, seleccioná un día libre, y reservá en minutos. Los horarios no disponibles
+        se esconden automáticamente y los días bloqueados por vacaciones no se muestran.
+      </p>
+      <div class="hero__actions">
+        <button class="primary" id="ctaStart">Comenzar reserva</button>
+        <button class="ghost" id="ctaInfo">Ver integración con Sheets</button>
+      </div>
+    </div>
+  </header>
 
+  <main class="layout">
+    <section class="stepper" aria-label="Pasos de la reserva">
+      <div class="stepper__item" data-step="0">
+        <span>1</span>
+        <p>Servicio</p>
+      </div>
+      <div class="stepper__item" data-step="1">
+        <span>2</span>
+        <p>Fecha y horario</p>
+      </div>
+      <div class="stepper__item" data-step="2">
+        <span>3</span>
+        <p>Datos</p>
+      </div>
+      <div class="stepper__item" data-step="3">
+        <span>4</span>
+        <p>Confirmación</p>
+      </div>
+    </section>
+
+    <section class="wizard" id="wizard">
+      <article class="panel" data-panel="0">
+        <h2>¿Qué servicio querés reservar?</h2>
+        <p class="muted">Seleccioná un servicio para habilitar los siguientes pasos.</p>
+        <div class="cards" id="serviceOptions"></div>
+      </article>
+
+      <article class="panel" data-panel="1">
+        <h2>Elegí un día y un horario disponible</h2>
+        <p class="muted">
+          Solo mostramos horarios libres. Si el día está bloqueado por vacaciones o feriados,
+          te lo avisamos para que elijas otro.
+        </p>
+        <div class="grid">
+          <div>
+            <label class="label" for="dateInput">Fecha</label>
+            <input type="date" id="dateInput" />
+            <p class="helper" id="dateHelper"></p>
+          </div>
+          <div>
+            <p class="label">Horarios disponibles</p>
+            <div class="slots" id="timeSlots"></div>
+            <p class="helper" id="slotsHelper"></p>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel" data-panel="2">
+        <h2>Completá tus datos</h2>
+        <form class="form" id="clientForm">
+          <label class="label" for="nameInput">Nombre y apellido</label>
+          <input type="text" id="nameInput" placeholder="Ej: Sofía Alvarez" required />
+
+          <label class="label" for="emailInput">Email</label>
+          <input type="email" id="emailInput" placeholder="sofia@email.com" required />
+
+          <label class="label" for="phoneInput">WhatsApp</label>
+          <input type="tel" id="phoneInput" placeholder="+54 11 1234 5678" required />
+
+          <label class="label" for="notesInput">Notas (opcional)</label>
+          <textarea id="notesInput" rows="3" placeholder="Contanos algo que debamos saber."></textarea>
+        </form>
+      </article>
+
+      <article class="panel" data-panel="3">
+        <h2>Confirmación</h2>
+        <div class="summary" id="summary"></div>
+        <div class="success" id="successMessage">
+          <h3>¡Listo! Tu turno fue reservado.</h3>
+          <p>Enviaremos la confirmación por email y WhatsApp.</p>
+        </div>
+      </article>
+
+      <div class="wizard__actions">
+        <button class="ghost" id="prevBtn" type="button">Volver</button>
+        <button class="primary" id="nextBtn" type="button">Continuar</button>
+      </div>
+    </section>
+
+    <section class="sheet" id="sheetInfo">
+      <h2>Integración con Google Sheets</h2>
+      <p>
+        Este prototipo se conecta con Google Sheets. Acá se ve exactamente dónde colocar las credenciales
+        y cómo crear la hoja para que el sistema oculte horarios ocupados o días bloqueados.
+      </p>
+      <ol>
+        <li>Creá un Google Sheet llamado <strong>Turnos Estetica Pro</strong>.</li>
+        <li>En la primera pestaña agregá las columnas: <strong>fecha</strong>, <strong>hora</strong>, <strong>servicio</strong>,
+          <strong>nombre</strong>, <strong>email</strong>, <strong>telefono</strong>, <strong>notas</strong>, <strong>estado</strong>.</li>
+        <li>En una segunda pestaña llamada <strong>Bloqueos</strong>, agregá columnas: <strong>fecha</strong>, <strong>motivo</strong>.</li>
+        <li>Creá un proyecto en <strong>Google Cloud</strong> y habilitá la API de Google Sheets.</li>
+        <li>Generá una <strong>API Key</strong> o un <strong>Service Account</strong> y pegá los valores en <span class="code">js/index.js</span> dentro de
+          <strong>sheetConfig</strong>. Ahí vas a ver exactamente qué campos completar.</li>
+        <li>Compartí la hoja con el email del Service Account (si usás ese método).</li>
+      </ol>
+      <div class="highlight">
+        <p><strong>¿Dónde van las credenciales?</strong></p>
+        <p>
+          En <span class="code">js/index.js</span> encontrás el bloque <strong>sheetConfig</strong> con los campos
+          <em>SHEET_ID</em>, <em>API_KEY</em> y <em>RANGE_TURNOS</em> / <em>RANGE_BLOQUEOS</em>. Solo reemplazás los valores
+          de ejemplo por los tuyos.
+        </p>
+      </div>
+    </section>
+  </main>
 </body>
 </html>
